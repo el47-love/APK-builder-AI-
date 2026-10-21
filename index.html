@@ -1,0 +1,336 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#0b5fff">
+  <meta name="description" content="Turn your Android app idea into an AI-generated project specification with APK Builder AI.">
+  <title>APK Builder AI — Turn your idea into an Android app</title>
+  <style>
+    :root {
+      --blue: #0b5fff;
+      --blue-dark: #0846bd;
+      --ink: #14213d;
+      --muted: #60708b;
+      --line: #dce5f2;
+      --bg: #f3f7ff;
+      --white: #ffffff;
+      --green: #087f5b;
+      --red: #b42318;
+      --shadow: 0 18px 55px rgba(28, 62, 120, .10);
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      color: var(--ink);
+      background: radial-gradient(circle at top right, #dceaff 0, transparent 34%), var(--bg);
+      line-height: 1.55;
+    }
+    .wrap { width: min(1060px, calc(100% - 28px)); margin: 0 auto; }
+    header { padding: 20px 0; }
+    .nav { display: flex; align-items: center; justify-content: space-between; gap: 12px; }
+    .brand { display: flex; align-items: center; gap: 11px; font-weight: 850; letter-spacing: -.3px; }
+    .logo {
+      display: grid; place-items: center; width: 43px; height: 43px; border-radius: 14px;
+      background: linear-gradient(135deg, var(--blue), #49a0ff); color: white; font-size: 23px;
+      box-shadow: 0 8px 20px rgba(11,95,255,.24);
+    }
+    .pill { color: var(--blue-dark); background: #e7efff; border: 1px solid #cfe0ff; padding: 6px 10px; border-radius: 999px; font-size: 12px; font-weight: 750; }
+    .hero { text-align: center; padding: 42px 0 28px; }
+    .eyebrow { display: inline-block; color: var(--blue-dark); font-size: 12px; font-weight: 850; letter-spacing: 1.5px; text-transform: uppercase; }
+    h1 { font-size: clamp(34px, 7vw, 58px); line-height: 1.05; letter-spacing: -2px; margin: 14px auto; max-width: 800px; }
+    .accent { color: var(--blue); }
+    .hero p { max-width: 660px; color: var(--muted); margin: 0 auto; font-size: 17px; }
+    .steps { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin: 24px 0 30px; }
+    .step { background: rgba(255,255,255,.82); border: 1px solid var(--line); padding: 14px; border-radius: 15px; text-align: left; }
+    .step b { display: block; font-size: 14px; margin-bottom: 3px; }
+    .step span { color: var(--muted); font-size: 12px; }
+    main { padding-bottom: 45px; }
+    .panel { background: var(--white); border: 1px solid var(--line); border-radius: 22px; box-shadow: var(--shadow); overflow: hidden; }
+    .panel-head { padding: 22px 24px; border-bottom: 1px solid var(--line); background: linear-gradient(110deg, #fff, #f5f8ff); }
+    .panel-head h2 { margin: 0 0 4px; font-size: 22px; }
+    .panel-head p { margin: 0; color: var(--muted); font-size: 14px; }
+    .panel-body { padding: 24px; }
+    .form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 17px; }
+    .field { display: flex; flex-direction: column; gap: 7px; }
+    .full { grid-column: 1 / -1; }
+    label { font-size: 13px; font-weight: 800; }
+    input, select, textarea {
+      width: 100%; min-width: 0; border: 1px solid #cdd8e8; border-radius: 12px;
+      background: white; color: var(--ink); font: inherit; font-size: 15px; padding: 12px 13px; outline: none;
+    }
+    textarea { resize: vertical; min-height: 120px; }
+    input:focus, select:focus, textarea:focus { border-color: var(--blue); box-shadow: 0 0 0 3px rgba(11,95,255,.12); }
+    .hint { color: var(--muted); font-size: 12px; margin-top: -2px; }
+    .actions { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 20px; }
+    button {
+      border: 0; border-radius: 12px; padding: 12px 17px; cursor: pointer;
+      font: inherit; font-weight: 800; transition: transform .12s ease, opacity .12s ease;
+    }
+    button:active { transform: translateY(1px); }
+    button:disabled { cursor: not-allowed; opacity: .48; }
+    .primary { color: white; background: linear-gradient(135deg, var(--blue), #347cff); box-shadow: 0 8px 18px rgba(11,95,255,.2); }
+    .secondary { color: var(--blue-dark); background: #eaf1ff; border: 1px solid #d6e4ff; }
+    .quiet { color: #465775; background: #f1f4f9; border: 1px solid #e1e7f0; }
+    .status { min-height: 24px; font-size: 13px; font-weight: 650; color: var(--muted); margin-top: 12px; overflow-wrap: anywhere; }
+    .status.good { color: var(--green); }
+    .status.bad { color: var(--red); }
+    .result { margin-top: 22px; border: 1px solid var(--line); border-radius: 17px; overflow: hidden; }
+    .result-head { padding: 15px 17px; display: flex; justify-content: space-between; align-items: center; gap: 10px; background: #f6f9ff; border-bottom: 1px solid var(--line); }
+    .result-head h3 { margin: 0; font-size: 16px; }
+    .result-head span { color: var(--muted); font-size: 11px; font-weight: 750; }
+    pre { margin: 0; padding: 18px; white-space: pre-wrap; overflow-wrap: anywhere; font: 13px/1.65 ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; min-height: 160px; max-height: 520px; overflow: auto; color: #24344f; }
+    .notice { margin-top: 18px; background: #fff8e6; border: 1px solid #f2dfaa; border-radius: 13px; padding: 13px 15px; color: #6f5414; font-size: 13px; }
+    .features { display: grid; grid-template-columns: repeat(3, 1fr); gap: 13px; margin-top: 20px; }
+    .feature { padding: 16px; border: 1px solid var(--line); background: white; border-radius: 15px; }
+    .feature .icon { font-size: 22px; }
+    .feature b { display: block; margin: 5px 0; }
+    .feature p { margin: 0; color: var(--muted); font-size: 13px; }
+    footer { text-align: center; color: var(--muted); font-size: 12px; padding: 25px 0 35px; }
+    @media (max-width: 680px) {
+      .hero { padding-top: 30px; }
+      .steps, .features { grid-template-columns: 1fr; }
+      .form-grid { grid-template-columns: 1fr; }
+      .full { grid-column: auto; }
+      .panel-body { padding: 17px; }
+      .panel-head { padding: 19px 17px; }
+      .result-head { align-items: flex-start; flex-direction: column; }
+      h1 { letter-spacing: -1.3px; }
+      .actions button { flex: 1 1 140px; }
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="wrap nav">
+      <div class="brand"><div class="logo" aria-hidden="true">✦</div><div>APK Builder AI<div style="font-size:11px;color:#60708b;font-weight:650;letter-spacing:.2px">Your idea. Your app journey.</div></div></div>
+      <span class="pill">ANDROID APP PLANNER</span>
+    </div>
+  </header>
+
+  <section class="hero wrap">
+    <span class="eyebrow">Build smarter, one step at a time</span>
+    <h1>Turn your idea into an <span class="accent">Android app plan.</span></h1>
+    <p>Describe the app you want. APK Builder AI will ask its AI service to create a practical project specification you can use to plan development.</p>
+    <div class="steps">
+      <div class="step"><b>01 · Describe</b><span>Explain your app idea in plain English.</span></div>
+      <div class="step"><b>02 · Generate</b><span>Get an AI-created project specification.</span></div>
+      <div class="step"><b>03 · Build next</b><span>Use the plan to prepare source code and a verified APK build.</span></div>
+    </div>
+  </section>
+
+  <main class="wrap">
+    <section class="panel">
+      <div class="panel-head">
+        <h2>Describe your Android app</h2>
+        <p>More detail helps the AI create a more useful plan.</p>
+      </div>
+      <div class="panel-body">
+        <form id="appForm">
+          <div class="form-grid">
+            <div class="field">
+              <label for="appName">App name</label>
+              <input id="appName" name="appName" maxlength="60" placeholder="e.g. SalesRep AI Zambia">
+            </div>
+            <div class="field">
+              <label for="category">App category</label>
+              <select id="category" name="category">
+                <option>Business</option>
+                <option>Education</option>
+                <option>Finance</option>
+                <option>Health and fitness</option>
+                <option>Shopping</option>
+                <option>Productivity</option>
+                <option>Entertainment</option>
+                <option>Social</option>
+                <option>Utilities</option>
+                <option>Other</option>
+              </select>
+            </div>
+            <div class="field full">
+              <label for="appIdea">What should your app do? *</label>
+              <textarea id="appIdea" name="appIdea" maxlength="4000" required placeholder="Example: Create a sales app for Android. I want to save customers, record visits and orders, track products and prices, plan follow-ups, and generate professional sales reports. It should work offline and use a clean blue-and-white design."></textarea>
+              <div class="hint">Up to 4,000 characters. Never enter passwords, API keys, or other secrets.</div>
+            </div>
+            <div class="field full">
+              <label for="features">Important features (optional)</label>
+              <textarea id="features" name="features" style="min-height:85px" maxlength="1000" placeholder="e.g. Login, dashboard, customer records, offline storage, reports, export to PDF"></textarea>
+            </div>
+            <div class="field full">
+              <label for="style">Design preference</label>
+              <select id="style" name="style">
+                <option>Professional blue and white</option>
+                <option>Dark mode</option>
+                <option>Minimal and clean</option>
+                <option>Bright and colourful</option>
+                <option>Let AI recommend a design</option>
+              </select>
+            </div>
+          </div>
+          <div class="actions">
+            <button class="primary" id="generate" type="submit">✦ Generate with AI</button>
+            <button class="quiet" id="clear" type="button">Clear form</button>
+          </div>
+          <div id="status" class="status" role="status" aria-live="polite"></div>
+        </form>
+
+        <section class="result" aria-labelledby="resultTitle">
+          <div class="result-head">
+            <h3 id="resultTitle">Your AI-generated project specification</h3>
+            <span id="resultLabel">WAITING FOR YOUR IDEA</span>
+          </div>
+          <pre id="output">Your generated project specification will appear here. Enter an app idea above and tap “Generate with AI”.</pre>
+          <div class="panel-body" style="padding-top:0">
+            <div class="actions">
+              <button class="secondary" id="download" type="button" disabled>Download specification</button>
+              <button class="secondary" id="copy" type="button" disabled>Copy specification</button>
+            </div>
+          </div>
+        </section>
+        <div class="notice"><strong>Honest status:</strong> This version connects to AI to generate a project specification. It does not yet generate a complete Android source project or compile an installable APK. APK downloads will only be offered after a real build pipeline is connected and verified.</div>
+      </div>
+    </section>
+
+    <section class="features" aria-label="What this version provides">
+      <div class="feature"><div class="icon">🧠</div><b>AI project planning</b><p>Turn your plain-English description into a structured app specification.</p></div>
+      <div class="feature"><div class="icon">📄</div><b>Save your result</b><p>Download or copy your generated specification for later development.</p></div>
+      <div class="feature"><div class="icon">🔒</div><b>Clear build status</b><p>Know what has been generated and what still needs to be built and tested.</p></div>
+    </section>
+  </main>
+
+  <footer class="wrap">© <span id="year"></span> APK Builder AI · Made to help turn app ideas into a development plan.</footer>
+
+  <script>
+    (() => {
+      'use strict';
+
+      const API_URL = 'https://flat-shape-aadfapk-builder-ai-api.el4761402.workers.dev';
+      const $ = (id) => document.getElementById(id);
+      let currentBrief = '';
+
+      $('year').textContent = new Date().getFullYear();
+
+      function setStatus(message, kind = '') {
+        $('status').textContent = message;
+        $('status').className = 'status' + (kind ? ' ' + kind : '');
+      }
+
+      $('appForm').addEventListener('submit', async (event) => {
+        event.preventDefault();
+
+        const idea = $('appIdea').value.trim();
+        if (!idea) {
+          setStatus('Please describe your app first.', 'bad');
+          $('appIdea').focus();
+          return;
+        }
+
+        const payload = {
+          idea,
+          name: $('appName').value.trim() || 'My Android App',
+          category: $('category').value,
+          features: $('features').value.trim(),
+          style: $('style').value
+        };
+
+        $('generate').disabled = true;
+        $('download').disabled = true;
+        $('copy').disabled = true;
+        $('resultLabel').textContent = 'GENERATING';
+        $('output').textContent = 'Connecting to the AI service… Please wait.';
+        setStatus('Sending your app idea to the AI service. This may take a little while.');
+
+        try {
+          const response = await fetch(API_URL, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(payload)
+          });
+
+          let data;
+          try {
+            data = await response.json();
+          } catch (_) {
+            throw new Error('The AI service returned an unreadable response. Check your Cloudflare Worker.');
+          }
+
+          if (!response.ok || !data.success || !data.projectSpec) {
+            throw new Error(data.error || ('AI service returned HTTP ' + response.status + '.'));
+          }
+
+          currentBrief =
+            'APK BUILDER AI — AI-GENERATED PROJECT SPECIFICATION\n' +
+            '===================================================\n\n' +
+            'App name: ' + payload.name + '\n' +
+            'Category: ' + payload.category + '\n' +
+            'Design preference: ' + payload.style + '\n\n' +
+            'APP IDEA\n' + payload.idea + '\n\n' +
+            'IMPORTANT FEATURES\n' + (payload.features || 'Not specified') + '\n\n' +
+            'AI PROJECT SPECIFICATION\n' + data.projectSpec + '\n\n' +
+            'BUILD STATUS\nThis is a project specification, not Android source code or an APK. A separate source-generation and verified cloud-build system is still required.';
+
+          $('output').textContent = currentBrief;
+          $('resultLabel').textContent = 'AI RESPONSE RECEIVED';
+          $('download').disabled = false;
+          $('copy').disabled = false;
+          setStatus('Success! The AI generated your project specification. APK compilation is not connected yet.', 'good');
+        } catch (error) {
+          currentBrief = '';
+          $('resultLabel').textContent = 'GENERATION FAILED';
+          $('output').textContent =
+            'We could not generate the specification.\n\nDetails: ' +
+            (error && error.message ? error.message : 'Unknown error') +
+            '\n\nTry again after checking your internet connection and the Cloudflare Workers AI binding. If the error mentions CORS, check the Worker’s allowed website origin.';
+          setStatus('Generation failed. Read the details in the result area above.', 'bad');
+        } finally {
+          $('generate').disabled = false;
+        }
+      });
+
+      $('clear').addEventListener('click', () => {
+        $('appForm').reset();
+        currentBrief = '';
+        $('output').textContent = 'Your generated project specification will appear here. Enter an app idea above and tap “Generate with AI”.';
+        $('resultLabel').textContent = 'WAITING FOR YOUR IDEA';
+        $('download').disabled = true;
+        $('copy').disabled = true;
+        setStatus('');
+      });
+
+      $('download').addEventListener('click', () => {
+        if (!currentBrief) return;
+        const blob = new Blob([currentBrief], { type: 'text/plain;charset=utf-8' });
+        const url = URL.createObjectURL(blob);
+        const link = document.createElement('a');
+        link.href = url;
+        link.download = 'apk-builder-ai-project-specification.txt';
+        document.body.appendChild(link);
+        link.click();
+        link.remove();
+        URL.revokeObjectURL(url);
+        setStatus('Your specification download has started.', 'good');
+      });
+
+      $('copy').addEventListener('click', async () => {
+        if (!currentBrief) return;
+        try {
+          await navigator.clipboard.writeText(currentBrief);
+          setStatus('Project specification copied to clipboard.', 'good');
+        } catch (_) {
+          const temporary = document.createElement('textarea');
+          temporary.value = currentBrief;
+          temporary.setAttribute('readonly', '');
+          temporary.style.position = 'fixed';
+          temporary.style.opacity = '0';
+          document.body.appendChild(temporary);
+          temporary.select();
+          const copied = document.execCommand('copy');
+          temporary.remove();
+          setStatus(copied ? 'Project specification copied to clipboard.' : 'Copy failed. Please use Download specification.', copied ? 'good' : 'bad');
+        }
+      });
+    })();
+  </script>
+</body>
+</html>
