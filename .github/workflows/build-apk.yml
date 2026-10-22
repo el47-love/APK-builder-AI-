@@ -32,6 +32,16 @@ jobs:
       - name: Install Android build tools
         run: sdkmanager "platforms;android-35" "build-tools;35.0.0"
 
+            - name: Inspect Android manifest
+        working-directory: android-project
+        run: |
+          echo "=== MANIFEST FILE ==="
+          ls -l app/src/main/AndroidManifest.xml
+          echo "=== MANIFEST CONTENTS ==="
+          cat -A app/src/main/AndroidManifest.xml
+          echo "=== XML VALIDATION ==="
+          python3 -c "import xml.etree.ElementTree as ET; ET.parse('app/src/main/AndroidManifest.xml'); print('XML is valid')"
+
       - name: Build debug APK
         working-directory: android-project
         run: gradle assembleDebug --no-daemon --stacktrace
