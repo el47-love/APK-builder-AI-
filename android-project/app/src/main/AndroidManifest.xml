@@ -3,7 +3,7 @@
 
     <application
         android:theme="@android:style/Theme.Material.Light.NoActionBar"
-        android:label="My Calculator"
+        android:label="Sales Rep AI"
         android:allowBackup="false"
         android:supportsRtl="true">
 
